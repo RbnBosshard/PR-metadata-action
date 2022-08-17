@@ -1,0 +1,10 @@
+# Gradle
+.gradle
+.idea
+build
+
+# Node
+node_modules
+
+# Local configuration
+application-local.yml
