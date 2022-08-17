@@ -5,7 +5,6 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-
   annotate-pr:
     runs-on: ubuntu-latest
     name: Annotates pull request with metadata
@@ -16,4 +15,6 @@ jobs:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.number }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token_github: ${{ secrets.GITHUB_TOKEN }}
+          token_gitlab: ${{ secrets.GITLAB_TOKEN }}
+          webhook_value: ${{ secrets.WEBHOOK }}

@@ -10,9 +10,16 @@ inputs:
   pr_number:
     description: 'The number of the pull request'
     required: true
-  token:
+  token_github:
     description: 'The token to use to access the GitHub API'
     required: true
+  token_gitlab:
+    description: 'The token to use to access the GitLab API'
+    required: true
+  webhook_value:
+    description: 'The token to use to access the Google Chat API'
+    required: true
+
 runs:
   using: 'node16'
   main: 'dist/index.js'

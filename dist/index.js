@@ -9725,7 +9725,9 @@ const main = async () => {
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
         const pr_number = core.getInput('pr_number', { required: true });
-        const token_ = core.getInput('token', { required: true });
+        const token_github = core.getInput('token_github', { required: true });
+        const token_gitlab = core.getInput('token_gitlab', { required: true });
+        const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
 
         /**
          * Now we need to create an instance of Octokit which will use to call
@@ -9735,7 +9737,7 @@ const main = async () => {
          * You can find all the information about how to use Octokit here:
          * https://octokit.github.io/rest.js/v18
          **/
-        const octokit = new github.getOctokit(token_);
+        const octokit = new github.getOctokit(token_github);
 
         /**
          * We need to fetch the list of files that were changes in the Pull Request
@@ -9827,10 +9829,15 @@ const main = async () => {
       `
         });
 
+        async function run() {
+            console.log('Hello, world!');
+        }
+
+        run();
 
 
-        let token = "glpat-vocNs7ApBU2oxxbttLgM"
-        const bot_url = "https://chat.googleapis.com/v1/spaces/AAAABBz5ukg/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=de0seD4UW8UbC8LPxfM2CwdlWK_uxxOpVjm0X6xXsNM%3D"
+
+        const bot_url = webhook_value_google_chat
         const baseUrl = 'https://hub.cardossier.net/api/v4/'
 
         const runner_mode = "default"
@@ -9841,7 +9848,7 @@ const main = async () => {
 
         let defaultHeader = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
+            'Authorization': 'Bearer ' + token_gitlab,
             //'Accept': 'application/json',
         }
 
