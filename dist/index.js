@@ -9863,6 +9863,28 @@ const main = async () => {
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
+
+        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls/'
+
+
+
+        defaultHeader = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token_github,
+            'Accept': 'application/vnd.github+json',
+        }
+
+        node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl_github + '?' + new URLSearchParams({
+            state: 'open'
+        }), {
+            method: 'GET',
+            headers: defaultHeader
+        })
+            .then(r => r.json())
+            .then(pr_requests => get_extended_pr_requests(pr_requests));
+
+
+
         //otherwise pipeline field is missing
         async function get_extended_pr_requests(simple_pr_requests) {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
