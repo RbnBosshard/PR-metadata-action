@@ -9836,7 +9836,6 @@ const main = async () => {
         run();
 
 
-
         const bot_url = webhook_value_google_chat
         const baseUrl = 'https://hub.cardossier.net/api/v4/'
 
@@ -9864,14 +9863,14 @@ const main = async () => {
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
 
-        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls/'
+        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
 
 
 
         defaultHeader = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token_github,
-            'Accept': 'application/vnd.github+json',
+            'Authorization': 'token ' + token_github,
+            //'Accept': 'application/vnd.github+json',
         }
 
         node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl_github + '?' + new URLSearchParams({
