@@ -9710,9 +9710,6 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(node_fetch__WEBPACK_IMPORTED_MODULE_0__);
 
 
-
-
-
 const core = __nccwpck_require__(3722);
 const github = __nccwpck_require__(8408);
 
@@ -9762,7 +9759,7 @@ const main = async () => {
                 },
                     {
                         textParagraph: {
-                            text: get_text_line("Updated at", pr_request.updated_at.toUTCString() )
+                            text: get_text_line("Updated at", new Date(pr_request.updated_at).toUTCString() )
                         }
                     },
                     {

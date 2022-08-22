@@ -1,8 +1,5 @@
 import fetch from 'node-fetch';
 
-
-
-
 const core = require('@actions/core');
 const github = require('@actions/github');
 
@@ -52,7 +49,7 @@ const main = async () => {
                 },
                     {
                         textParagraph: {
-                            text: get_text_line("Updated at", pr_request.updated_at.toUTCString() )
+                            text: get_text_line("Updated at", new Date(pr_request.updated_at).toUTCString() )
                         }
                     },
                     {
