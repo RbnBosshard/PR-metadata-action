@@ -2,8 +2,7 @@ name: PR annoy-o-bot
 
 on:
   schedule:
-    - cron: '15 15 * * 1-5'
-    - cron: '* * * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   annotate-pr:
