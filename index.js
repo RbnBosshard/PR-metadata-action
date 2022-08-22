@@ -51,6 +51,8 @@ const main = async () => {
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
+        run();
+
 
         const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
 
