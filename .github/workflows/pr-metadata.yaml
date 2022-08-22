@@ -14,5 +14,5 @@ jobs:
         uses: RbnBosshard/PR-metadata-action@main
         with:
           token_github: ${{ secrets.GITHUB_TOKEN }}
-          token_gitlab: ${{ secrets.GITLAB_TOKEN }}
+          token_gitlab: ${{ secrets.TOKEN_GITLAB }}
           webhook_value: ${{ secrets.WEBHOOK }}
