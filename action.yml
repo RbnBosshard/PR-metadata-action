@@ -1,9 +1,6 @@
 name: 'PR Metadata Action'
 description: 'Adds pull request file changes as a comment to a newly opened PR'
 inputs:
-  owner:
-    description: 'The owner of the repository'
-    required: true
   token_github:
     description: 'The token to use to access the GitHub API'
     required: true

@@ -13,7 +13,6 @@ jobs:
       - name: Get PR
         uses: RbnBosshard/PR-metadata-action@main
         with:
-          owner: ${{ github.repository_owner }}
           token_github: ${{ secrets.GITHUB_TOKEN }}
           token_gitlab: ${{ secrets.GITLAB_TOKEN }}
           webhook_value: ${{ secrets.WEBHOOK }}
