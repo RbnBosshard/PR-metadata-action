@@ -277,7 +277,7 @@ const main = async () => {
 
             return fetch(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/discussions", {
                 method: 'GET',
-                headers: defaultHeader,
+                headers: defaultHeaderGitlab,
             })
                 .then((r) => r.json())
                 .then((discussions) => {
@@ -317,7 +317,7 @@ const main = async () => {
             let merge_id = pr_request.iid
             return fetch(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/approval_settings", {
                 method: 'GET',
-                headers: defaultHeader,
+                headers: defaultHeaderGitlab,
             })
                 .then((r) => r.json())
         }

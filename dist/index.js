@@ -9987,7 +9987,7 @@ const main = async () => {
 
             return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/discussions", {
                 method: 'GET',
-                headers: defaultHeader,
+                headers: defaultHeaderGitlab,
             })
                 .then((r) => r.json())
                 .then((discussions) => {
@@ -10027,7 +10027,7 @@ const main = async () => {
             let merge_id = pr_request.iid
             return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/approval_settings", {
                 method: 'GET',
-                headers: defaultHeader,
+                headers: defaultHeaderGitlab,
             })
                 .then((r) => r.json())
         }
