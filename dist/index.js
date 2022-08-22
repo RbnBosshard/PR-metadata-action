@@ -9724,47 +9724,93 @@ const main = async () => {
          **/
         const token_github = core.getInput('token_github', { required: true });
         const token_gitlab = core.getInput('token_gitlab', { required: true });
-        const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
+        const bot_url_google_chat = core.getInput('webhook_value', {required: true});
 
-
-        async function run() {
-            console.log('Hello, world!');
-        }
-
-        run();
-
-
-
-        const bot_url = webhook_value_google_chat
-        const baseUrl = 'https://hub.cardossier.net/api/v4/'
+        const baseUrlGitlab = 'https://hub.cardossier.net/api/v4/'
+        const baseUrlGithub = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
 
         const runner_mode = "default"
+
         const ORANGE = "#ffa500"
         const RED = "#ff0000"
         const GREEN = "#00ff00"
 
+        // Github
+        let defaultHeaderGithub = {
+            'Content-Type': 'application/json',
+            'Authorization': 'token ' + token_github,
+            //'Accept': 'application/vnd.github+json',
+        }
 
-        let defaultHeader = {
+        node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGithub + '?' + new URLSearchParams({
+            state: 'open',
+            draft: 'false'
+        }), {
+            method: 'GET',
+            headers: defaultHeaderGithub
+        })
+            .then(r => r.json())
+            .then(pr_requests => prepare_cards_github(pr_requests))
+
+
+        async function prepare_cards_github(pr_requests) {
+            let cards  = await Promise.all(pr_requests.map(async (pr_request) => {
+                let widgets = [{
+                    textParagraph: {
+                        text: get_text_line("Name", pr_request.user.login )
+                    }
+                },
+                    {
+                        textParagraph: {
+                            text: get_text_line("Updated at", pr_request.updated_at.toUTCString() )
+                        }
+                    },
+                    {
+                        buttons: [{
+                            textButton: {
+                                text: "<font color=\"#DD79FC\">" + "View Pull Request" + "</font>",
+                                onClick: {
+                                    openLink: {
+                                        url: pr_request.html_url
+                                    }
+                                }
+                            }
+                        }]
+                    }]
+                return {
+                    header: {
+                        title: pr_request.title
+                    },
+                    sections: { widgets: widgets }
+                }
+            }))
+            send_cards_to_chat(cards.filter((card) => card != null))
+        }
+
+
+        // Gitlab
+        let defaultHeaderGitlab = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token_gitlab,
             //'Accept': 'application/json',
         }
 
-        node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + 'merge_requests?' + new URLSearchParams({
+        node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + 'merge_requests?' + new URLSearchParams({
             state: 'opened',
             scope: 'all',
             view: 'simple'
         }), {
             method: 'GET',
-            headers: defaultHeader
+            headers: defaultHeaderGitlab
         })
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
+
         //otherwise pipeline field is missing
         async function get_extended_pr_requests(simple_pr_requests) {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
-                return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
+                return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
                     method: 'GET',
                     headers: defaultHeader
                 })
@@ -9835,13 +9881,16 @@ const main = async () => {
         async function prepare_cards(pr_requests) {
             let cards = await Promise.all(pr_requests.map(async (pr_request) => {
                 const approval_settings = await get_approval_settings(pr_request)
-
+                let merge_readiness = get_merge_readiness(pr_request, approval_settings).map((item) => item.color === GREEN)
+                if (runner_mode === "default" && ((!merge_readiness[1] || !merge_readiness[2]) || (merge_readiness[0] && merge_readiness[1] && merge_readiness[2]) || pr_request.draft)) {
+                    return null
+                }
                 const open_thread_authors = await get_open_thread_authors(pr_request)
                 //const pipeline = await get_pipeline(pr_request)
                 let widgets = []
-                if (runner_mode == "extended") {
+                if (runner_mode === "extended") {
                     widgets = prepare_extended_widgets(pr_request, approval_settings, open_thread_authors)
-                } else if (runner_mode == "default") {
+                } else if (runner_mode === "default") {
                     widgets = prepare_simple_widgets(pr_request, approval_settings, open_thread_authors)
                 }
 
@@ -9939,7 +9988,7 @@ const main = async () => {
             let project_id = pr_request.project_id
             let merge_id = pr_request.iid
 
-            return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + "/projects/" + project_id + "/merge_requests/" + merge_id + "/discussions", {
+            return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/discussions", {
                 method: 'GET',
                 headers: defaultHeader,
             })
@@ -9979,7 +10028,7 @@ const main = async () => {
         async function get_approval_settings(pr_request) {
             let project_id = pr_request.project_id
             let merge_id = pr_request.iid
-            return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + "/projects/" + project_id + "/merge_requests/" + merge_id + "/approval_settings", {
+            return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "/projects/" + project_id + "/merge_requests/" + merge_id + "/approval_settings", {
                 method: 'GET',
                 headers: defaultHeader,
             })
@@ -9987,7 +10036,7 @@ const main = async () => {
         }
 
         function send_cards_to_chat(cards) {
-            node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(bot_url, {
+            node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(bot_url_google_chat, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
