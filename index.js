@@ -1,8 +1,6 @@
 import fetch from 'node-fetch';
 
 
-
-
 const core = require('@actions/core');
 const github = require('@actions/github');
 
@@ -13,8 +11,6 @@ const main = async () => {
          * and store them in variables for us to use.
          **/
         const owner = core.getInput('owner', { required: true });
-        const repo = core.getInput('repo', { required: true });
-        const pr_number = core.getInput('pr_number', { required: true });
         const token_github = core.getInput('token_github', { required: true });
         const token_gitlab = core.getInput('token_gitlab', { required: true });
         const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
@@ -37,9 +33,7 @@ const main = async () => {
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
         const { data: changedFiles } = await octokit.rest.pulls.listFiles({
-            owner,
-            repo,
-            pull_number: pr_number,
+            owner
         });
 
 
@@ -75,29 +69,21 @@ const main = async () => {
                 case 'md':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['markdown'],
                     });
                 case 'js':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['javascript'],
                     });
                 case 'yml':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['yaml'],
                     });
                 case 'yaml':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['yaml'],
                     });
             }
@@ -109,10 +95,8 @@ const main = async () => {
          */
         await octokit.rest.issues.createComment({
             owner,
-            repo,
-            issue_number: pr_number,
             body: `
-        Pull Request #${pr_number} has been updated with: \n
+        Pull Request has been updated with: \n
         - ${diffData.changes} changes \n
         - ${diffData.additions} additions \n
         - ${diffData.deletions} deletions \n
@@ -124,7 +108,6 @@ const main = async () => {
         }
 
         run();
-
 
 
         const bot_url = webhook_value_google_chat
@@ -152,6 +135,28 @@ const main = async () => {
         })
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
+
+
+        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
+
+
+
+        defaultHeader = {
+            'Content-Type': 'application/json',
+            'Authorization': 'token ' + token_github,
+            //'Accept': 'application/vnd.github+json',
+        }
+
+        fetch(baseUrl_github + '?' + new URLSearchParams({
+            state: 'open'
+        }), {
+            method: 'GET',
+            headers: defaultHeader
+        })
+            .then(r => r.json())
+            .then(pr_requests => prepare_cards_github(pr_requests))
+
+
 
         //otherwise pipeline field is missing
         async function get_extended_pr_requests(simple_pr_requests) {
@@ -220,6 +225,40 @@ const main = async () => {
 
             var diff = parseInt((+today - +createdOn) / msInDay, 10)
             return ("" + diff + " days go")
+        }
+
+        async function prepare_cards_github(pr_requests) {
+            let cards  = await Promise.all(pr_requests.map(async (pr_request) => {
+                let widgets = [{
+                    textParagraph: {
+                        text: get_text_line("Created at", pr_request.user.login )
+                    }
+                },
+                {
+                    textParagraph: {
+                        text: get_text_line("Updated at", pr_request.updated_at )
+                    }
+                },
+                    {
+                    buttons: [{
+                        textButton: {
+                            text: "<font color=\"#0645AD\">" + "View Pull Request" + "</font>",
+                            onClick: {
+                                openLink: {
+                                    url: pr_request.html_url
+                                }
+                            }
+                        }
+                    }]
+                }]
+                return {
+                    header: {
+                        title: pr_request.title
+                    },
+                    sections: { widgets: widgets }
+                }
+            }))
+            send_cards_to_chat(cards.filter((card) => card != null))
         }
 
 
