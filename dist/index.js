@@ -9733,8 +9733,8 @@ const main = async () => {
 
 
         const bot_url = webhook_value_google_chat
-        //const baseUrl = 'https://hub.cardossier.net/api/v4/'
-        const baseUrl = 'https://gitlab.com/api/v4/'
+        const baseUrl = 'https://hub.cardossier.net/api/v4/'
+        //const baseUrl = 'https://gitlab.com/api/v4/'
 
         const runner_mode = "default"
         const ORANGE = "#ffa500"
@@ -9757,7 +9757,7 @@ const main = async () => {
             headers: defaultHeader
         })
             .then(r => r.json())
-            .then(pr_requests => console.log(pr_requests));
+            .then(pr_requests => get_extended_pr_requests(pr_requests));
 
         run();
 
