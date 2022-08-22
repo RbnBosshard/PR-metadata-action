@@ -9711,8 +9711,6 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-
-
 const core = __nccwpck_require__(3722);
 const github = __nccwpck_require__(8408);
 
@@ -9745,9 +9743,7 @@ const main = async () => {
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
         const { data: changedFiles } = await octokit.rest.pulls.listFiles({
-            owner,
-            repo,
-            pull_number: pr_number,
+            owner
         });
 
 
@@ -9783,29 +9779,21 @@ const main = async () => {
                 case 'md':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['markdown'],
                     });
                 case 'js':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['javascript'],
                     });
                 case 'yml':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['yaml'],
                     });
                 case 'yaml':
                     await octokit.rest.issues.addLabels({
                         owner,
-                        repo,
-                        issue_number: pr_number,
                         labels: ['yaml'],
                     });
             }
@@ -9817,10 +9805,8 @@ const main = async () => {
          */
         await octokit.rest.issues.createComment({
             owner,
-            repo,
-            issue_number: pr_number,
             body: `
-        Pull Request #${pr_number} has been updated with: \n
+        Pull Request has been updated with: \n
         - ${diffData.changes} changes \n
         - ${diffData.additions} additions \n
         - ${diffData.deletions} deletions \n
