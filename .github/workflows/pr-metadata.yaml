@@ -12,6 +12,6 @@ jobs:
       - name: Get PR
         uses: RbnBosshard/PR-metadata-action@main
         with:
-          token_github: ${{ secrets.ANNOY_GITLAB }}
-          token_gitlab: ${{ secrets.TOKEN_GITHUB }}
+          token_github: ${{ secrets.TOKEN_GITHUB }}
+          token_gitlab: ${{ secrets.ANNOY_GITLAB }}
           webhook_value: ${{ secrets.WEBHOOK }}
