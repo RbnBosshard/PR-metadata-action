@@ -99,7 +99,7 @@ const main = async () => {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
                 return fetch(baseUrlGitlab + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
                     method: 'GET',
-                    headers: defaultHeader
+                    headers: defaultHeaderGitlab
                 })
                     .then(r => r.json())
             }))

@@ -9809,7 +9809,7 @@ const main = async () => {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
                 return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrlGitlab + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
                     method: 'GET',
-                    headers: defaultHeader
+                    headers: defaultHeaderGitlab
                 })
                     .then(r => r.json())
             }))
