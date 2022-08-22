@@ -9711,6 +9711,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
+
+
 const core = __nccwpck_require__(3722);
 const github = __nccwpck_require__(8408);
 
@@ -9720,15 +9722,21 @@ const main = async () => {
          * We need to fetch all the inputs that were provided to our action
          * and store them in variables for us to use.
          **/
-
         const token_github = core.getInput('token_github', { required: true });
         const token_gitlab = core.getInput('token_gitlab', { required: true });
         const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
 
 
+        async function run() {
+            console.log('Hello, world!');
+        }
+
+        run();
+
+
+
         const bot_url = webhook_value_google_chat
         const baseUrl = 'https://hub.cardossier.net/api/v4/'
-
 
         const runner_mode = "default"
         const ORANGE = "#ffa500"
@@ -9753,47 +9761,7 @@ const main = async () => {
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
-
-
-
-
-        async function prepare_cards_github(pr_requests) {
-            let cards  = await Promise.all(pr_requests.map(async (pr_request) => {
-                let widgets = [{
-                    textParagraph: {
-                        text: get_text_line("Created at", pr_request.user.login )
-                    }
-                },
-                    {
-                        textParagraph: {
-                            text: get_text_line("Updated at", pr_request.updated_at )
-                        }
-                    },
-                    {
-                        buttons: [{
-                            textButton: {
-                                text: "<font color=\"#0645AD\">" + "View Pull Request" + "</font>",
-                                onClick: {
-                                    openLink: {
-                                        url: pr_request.html_url
-                                    }
-                                }
-                            }
-                        }]
-                    }]
-                return {
-                    header: {
-                        title: pr_request.title
-                    },
-                    sections: { widgets: widgets }
-                }
-            }))
-            send_cards_to_chat(cards.filter((card) => card != null))
-        }
-
-
-
-//otherwise pipeline field is missing
+        //otherwise pipeline field is missing
         async function get_extended_pr_requests(simple_pr_requests) {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
                 return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
@@ -9801,7 +9769,6 @@ const main = async () => {
                     headers: defaultHeader
                 })
                     .then(r => r.json())
-                    .then(r => console.log(r))
             }))
             prepare_cards(extended_pr_requests)
         }
@@ -9868,14 +9835,10 @@ const main = async () => {
         async function prepare_cards(pr_requests) {
             let cards = await Promise.all(pr_requests.map(async (pr_request) => {
                 const approval_settings = await get_approval_settings(pr_request)
-                console.log(approval_settings)
-
                 let merge_readiness = get_merge_readiness(pr_request, approval_settings).map((item) => item.color == GREEN)
                 if (runner_mode == "default" && ((!merge_readiness[1] || !merge_readiness[2]) || (merge_readiness[0] && merge_readiness[1] && merge_readiness[2]) || pr_request.draft)) {
                     return null
                 }
-
-
                 const open_thread_authors = await get_open_thread_authors(pr_request)
                 //const pipeline = await get_pipeline(pr_request)
                 let widgets = []
@@ -10041,7 +10004,6 @@ const main = async () => {
                     console.log("Response: ", data)
                 })
         }
-
 
     } catch (error) {
         core.setFailed(error.message);
