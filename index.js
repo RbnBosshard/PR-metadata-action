@@ -11,12 +11,6 @@ const main = async () => {
          * and store them in variables for us to use.
          **/
 
-        async function run() {
-            console.log('Hello, world!');
-        }
-
-        run();
-
         const token_github = core.getInput('token_github', { required: true });
         const token_gitlab = core.getInput('token_gitlab', { required: true });
         const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
@@ -49,27 +43,8 @@ const main = async () => {
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
-        run();
-
-        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
-
-        defaultHeader = {
-            'Content-Type': 'application/json',
-            'Authorization': 'token ' + token_github,
-            //'Accept': 'application/vnd.github+json',
-        }
-
-        fetch(baseUrl_github + '?' + new URLSearchParams({
-            state: 'open'
-        }), {
-            method: 'GET',
-            headers: defaultHeader
-        })
-            .then(r => r.json())
-            .then(pr_requests => prepare_cards_github(pr_requests))
 
 
-        run();
 
 
         async function prepare_cards_github(pr_requests) {
