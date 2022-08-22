@@ -9723,8 +9723,6 @@ const main = async () => {
          * and store them in variables for us to use.
          **/
         const owner = core.getInput('owner', { required: true });
-        const repo = core.getInput('repo', { required: true });
-        const pr_number = core.getInput('pr_number', { required: true });
         const token_github = core.getInput('token_github', { required: true });
         const token_gitlab = core.getInput('token_gitlab', { required: true });
         const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
