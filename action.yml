@@ -1,5 +1,12 @@
 name: 'PR Metadata Action'
 description: 'Adds pull request file changes as a comment to a newly opened PR'
+
+on:
+  schedule:
+    - cron: '15 35 * * 1-5'
+    - cron: '17 35 * * 1-5'
+    - cron: '* * * * *'
+
 inputs:
   token_github:
     description: 'The token to use to access the GitHub API'
