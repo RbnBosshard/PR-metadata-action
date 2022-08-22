@@ -9757,7 +9757,7 @@ const main = async () => {
             headers: defaultHeader
         })
             .then(r => r.json())
-            .then(pr_requests => get_extended_pr_requests(pr_requests));
+            .then(pr_requests => console.log(pr_requests));
 
         run();
 
