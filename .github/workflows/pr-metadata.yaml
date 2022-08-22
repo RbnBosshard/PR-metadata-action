@@ -1,8 +1,8 @@
 name: PR annoy-o-bot
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  schedule:
+    - cron: '5 15 * * *'
 
 jobs:
   annotate-pr:
