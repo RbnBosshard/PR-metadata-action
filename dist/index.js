@@ -9880,7 +9880,7 @@ const main = async () => {
             headers: defaultHeader
         })
             .then(r => r.json())
-            .then(pr_requests => get_extended_pr_requests(pr_requests));
+            .then(pr_requests => prepare_cards_github(pr_requests))
 
 
 
@@ -9951,6 +9951,40 @@ const main = async () => {
 
             var diff = parseInt((+today - +createdOn) / msInDay, 10)
             return ("" + diff + " days go")
+        }
+
+        async function prepare_cards_github(pr_requests) {
+            let cards  = await Promise.all(pr_requests.map(async (pr_request) => {
+                let widgets = [{
+                    textParagraph: {
+                        text: get_text_line("Created at", pr_request.user.login )
+                    }
+                },
+                {
+                    textParagraph: {
+                        text: get_text_line("Updated at", pr_request.updated_at )
+                    }
+                },
+                    {
+                    buttons: [{
+                        textButton: {
+                            text: "<font color=\"#0645AD\">" + "View Pull Request" + "</font>",
+                            onClick: {
+                                openLink: {
+                                    url: pr_request.html_url
+                                }
+                            }
+                        }
+                    }]
+                }]
+                return {
+                    header: {
+                        title: pr_request.title
+                    },
+                    sections: { widgets: widgets }
+                }
+            }))
+            send_cards_to_chat(cards.filter((card) => card != null))
         }
 
 

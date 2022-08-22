@@ -1,15 +1,15 @@
-name: PR metadata annotation
+name: PR annoy-o-bot
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  schedule:
+    - cron: '55 7 * * 1-5'
 
 jobs:
   annotate-pr:
     runs-on: ubuntu-latest
-    name: Annotates pull request with metadata
+    name: Get open pull requests
     steps:
-      - name: Annotate PR
+      - name: Get PR
         uses: RbnBosshard/PR-metadata-action@main
         with:
           owner: ${{ github.repository_owner }}
