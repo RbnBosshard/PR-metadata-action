@@ -3,6 +3,8 @@ name: PR annoy-o-bot
 on:
   schedule:
     - cron: '*/5 * * * *'
+  workflow_dispatch:
+
 
 jobs:
   annotate-pr:
