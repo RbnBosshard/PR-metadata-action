@@ -9868,15 +9868,12 @@ const main = async () => {
             let cards = await Promise.all(pr_requests.map(async (pr_request) => {
                 const approval_settings = await get_approval_settings(pr_request)
                 console.log(approval_settings)
-                try {
-                    let merge_readiness = get_merge_readiness(pr_request, approval_settings).map((item) => item.color == GREEN)
-                    if (runner_mode == "default" && ((!merge_readiness[1] || !merge_readiness[2]) || (merge_readiness[0] && merge_readiness[1] && merge_readiness[2]) || pr_request.draft)) {
-                        return null
-                    }
+
+                let merge_readiness = get_merge_readiness(pr_request, approval_settings).map((item) => item.color == GREEN)
+                if (runner_mode == "default" && ((!merge_readiness[1] || !merge_readiness[2]) || (merge_readiness[0] && merge_readiness[1] && merge_readiness[2]) || pr_request.draft)) {
+                    return null
                 }
-                catch (error) {
-                    return null;
-                }
+
 
                 const open_thread_authors = await get_open_thread_authors(pr_request)
                 //const pipeline = await get_pipeline(pr_request)
