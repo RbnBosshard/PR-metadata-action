@@ -9732,9 +9732,6 @@ const main = async () => {
         const webhook_value_google_chat = core.getInput('webhook_value', {required: true});
 
 
-        run();
-
-
         const bot_url = webhook_value_google_chat
         const baseUrl = 'https://hub.cardossier.net/api/v4/'
 
@@ -9761,29 +9758,7 @@ const main = async () => {
             .then(r => r.json())
             .then(pr_requests => get_extended_pr_requests(pr_requests));
 
-        run();
-
-
-        const baseUrl_github = 'https://api.github.com/repos/RbnBosshard/PR-metadata-action/pulls'
-
-        defaultHeader = {
-            'Content-Type': 'application/json',
-            'Authorization': 'token ' + token_github,
-            //'Accept': 'application/vnd.github+json',
-        }
-
-        node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl_github + '?' + new URLSearchParams({
-            state: 'open'
-        }), {
-            method: 'GET',
-            headers: defaultHeader
-        })
-            .then(r => r.json())
-            .then(pr_requests => prepare_cards_github(pr_requests))
-
-
-
-        //otherwise pipeline field is missing
+//otherwise pipeline field is missing
         async function get_extended_pr_requests(simple_pr_requests) {
             const extended_pr_requests = await Promise.all(simple_pr_requests.map((pr_request) => {
                 return node_fetch__WEBPACK_IMPORTED_MODULE_0___default()(baseUrl + "projects/" + pr_request.project_id + "/merge_requests/" + pr_request.iid, {
@@ -9850,40 +9825,6 @@ const main = async () => {
 
             var diff = parseInt((+today - +createdOn) / msInDay, 10)
             return ("" + diff + " days go")
-        }
-
-        async function prepare_cards_github(pr_requests) {
-            let cards  = await Promise.all(pr_requests.map(async (pr_request) => {
-                let widgets = [{
-                    textParagraph: {
-                        text: get_text_line("Created at", pr_request.user.login )
-                    }
-                },
-                {
-                    textParagraph: {
-                        text: get_text_line("Updated at", pr_request.updated_at )
-                    }
-                },
-                    {
-                    buttons: [{
-                        textButton: {
-                            text: "<font color=\"#0645AD\">" + "View Pull Request" + "</font>",
-                            onClick: {
-                                openLink: {
-                                    url: pr_request.html_url
-                                }
-                            }
-                        }
-                    }]
-                }]
-                return {
-                    header: {
-                        title: pr_request.title
-                    },
-                    sections: { widgets: widgets }
-                }
-            }))
-            send_cards_to_chat(cards.filter((card) => card != null))
         }
 
 
@@ -10060,6 +10001,7 @@ const main = async () => {
                     console.log("Response: ", data)
                 })
         }
+
 
     } catch (error) {
         core.setFailed(error.message);
